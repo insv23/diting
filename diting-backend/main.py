@@ -1,27 +1,24 @@
-from fastapi import FastAPI
-from typing import Union
-from pydantic import BaseModel
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, Request, responses
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-class Item(BaseModel):
-    name: str
-    price: float
-    is_offer: Union[bool, None] = None
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://45.152.64.68:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
 
-@app.get("/items/{item_id}")
-async def read_item(item_id: int, q: Union[str, None] = None ):
-    return {"item_id": item_id, "q": q}
-
-@app.put("/items/{item_id}")
-def undate_item(item_id: int, item: Item):
-    return {"item_name": item.name, "item_id": item_id}
-
-@app.get("/download/{filename}")
-async def download_file(filename: str):
-    return FileResponse(f"files/{filename}")
+@app.post('/upload')
+async def upload(request: Request):
+    print('Received a request from: ', request.client)
+    form = await request.form()
+    file_content = await form['file'].read()
+    words = await form['words'].read()
+    print(file_content, words)

@@ -30,7 +30,7 @@ export default function AudioSubmit({ file, setFile, words, setWords }: Props) {
     formData.append('file', file);
     formData.append('words', words);
     const promise = () =>
-      fetch(`${process.env.DITING_BACKEND_URL}/upload`, {
+      fetch(`${process.env.NEXT_PUBLIC_DITING_BACKEND_URL}/upload`, {
         method: 'POST',
         body: formData,
       }).then((response) => response.json());
@@ -87,7 +87,8 @@ export default function AudioSubmit({ file, setFile, words, setWords }: Props) {
       <Button
         disabled={submitted}
         onClick={() => {
-          setSubmitted(true), submitAudio;
+          setSubmitted(true);
+          submitAudio();
         }}
       >
         {submitted ? '上传中...' : '点击上传!'}
